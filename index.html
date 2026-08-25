@@ -176,6 +176,8 @@ tbody tr:nth-child(even) td{background:var(--surface-2)}
 /* ---------- porta de entrada ---------- */
 .trava{position:fixed; inset:0; z-index:200; background:var(--ground);
   display:flex; align-items:center; justify-content:center; padding:24px}
+/* o atributo hidden perde para o display:flex acima se isto não existir */
+.trava[hidden]{display:none !important}
 .trava .cartao{width:100%; max-width:340px; text-align:center}
 .trava .marca{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.2em;
   text-transform:uppercase; color:var(--accent-ink); font-weight:500}
@@ -199,7 +201,7 @@ body.travado .wrap, body.travado .toast{display:none}
          autocomplete="current-password" maxlength="12" aria-label="Senha de acesso">
   <button id="entrar" type="submit">Entrar</button>
   <div class="erro" id="erroSenha" role="alert"></div>
-  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.<br><span style="opacity:.6">versão 25/08 00:57</span></div>
+  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.<br><span style="opacity:.6">versão 25/08 01:00</span></div>
  </form>
 </div><div class="wrap">
 <nav class="rail">
@@ -339,7 +341,12 @@ body.travado .wrap, body.travado .toast{display:none}
   }
   var trava=document.getElementById('trava'), campo=document.getElementById('senha'),
       erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha');
-  function abrir(){ document.body.classList.remove('travado'); trava.hidden=true; }
+  function abrir(){
+    document.body.classList.remove('travado');
+    trava.hidden=true;
+    trava.style.display='none';        // cinto e suspensório: não depende do [hidden]
+    if(trava.parentNode) trava.parentNode.removeChild(trava);
+  }
   function tentar(){
     if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); return true; }
     erro.textContent='Senha incorreta.'; campo.value=''; campo.focus();
