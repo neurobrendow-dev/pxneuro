@@ -199,7 +199,7 @@ body.travado .wrap, body.travado .toast{display:none}
          autocomplete="current-password" maxlength="12" aria-label="Senha de acesso">
   <button id="entrar" type="submit">Entrar</button>
   <div class="erro" id="erroSenha" role="alert"></div>
-  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.</div>
+  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.<br><span style="opacity:.6">versão 25/08 00:57</span></div>
  </form>
 </div><div class="wrap">
 <nav class="rail">
@@ -360,6 +360,16 @@ body.travado .wrap, body.travado .toast{display:none}
 })();
 </script><script>
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
-  window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); });
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
+      reg.update();                       // checa versão nova a cada abertura
+      setInterval(function(){ reg.update(); }, 3600000);
+    }).catch(function(){});
+  });
+  // quando um service worker novo assume, recarrega uma vez para pegar a página nova
+  var jaRecarregou=false;
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if(jaRecarregou) return; jaRecarregou=true; location.reload();
+  });
 }
 </script></body></html>
