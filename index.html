@@ -192,15 +192,15 @@ tbody tr:nth-child(even) td{background:var(--surface-2)}
 body.travado{overflow:hidden}
 body.travado .wrap, body.travado .toast{display:none}
 </style></head><body><div class="trava" id="trava" hidden>
- <div class="cartao">
+ <form class="cartao" id="formSenha" action="#" novalidate>
   <div class="marca">Receituário de bolso</div>
   <h1>Digite a senha</h1>
-  <input id="senha" type="password" inputmode="numeric" autocomplete="current-password"
-         maxlength="12" aria-label="Senha de acesso">
-  <button id="entrar" type="button">Entrar</button>
+  <input id="senha" name="senha" type="password" inputmode="numeric" enterkeyhint="go"
+         autocomplete="current-password" maxlength="12" aria-label="Senha de acesso">
+  <button id="entrar" type="submit">Entrar</button>
   <div class="erro" id="erroSenha" role="alert"></div>
   <div class="pe">O acesso fica salvo neste aparelho por 21 dias.</div>
- </div>
+ </form>
 </div><div class="wrap">
 <nav class="rail">
  <div class="brand"><span>Referência de posologia</span>Receituário de bolso</div>
@@ -338,18 +338,25 @@ body.travado .wrap, body.travado .toast{display:none}
     try{ var t=localStorage.getItem(CHAVE); return !!t && Date.now() < Number(t); }catch(e){ return false; }
   }
   var trava=document.getElementById('trava'), campo=document.getElementById('senha'),
-      erro=document.getElementById('erroSenha');
+      erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha');
   function abrir(){ document.body.classList.remove('travado'); trava.hidden=true; }
   function tentar(){
-    if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); }
-    else { erro.textContent='Senha incorreta.'; campo.value=''; campo.focus(); }
+    if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); return true; }
+    erro.textContent='Senha incorreta.'; campo.value=''; campo.focus();
+    return false;
   }
   if(valido()){ abrir(); return; }
   document.body.classList.add('travado');
   trava.hidden=false;
-  campo.focus();
-  document.getElementById('entrar').addEventListener('click', tentar);
-  campo.addEventListener('keydown', function(e){ if(e.key==='Enter') tentar(); });
+  try{ campo.focus(); }catch(e){}
+  // submit cobre de uma vez: clique no botão, Enter no teclado e a tecla Ir do celular
+  form.addEventListener('submit', function(e){ e.preventDefault(); tentar(); });
+  // redundância para navegador que não dispare submit por algum motivo
+  document.getElementById('entrar').addEventListener('click', function(e){ e.preventDefault(); tentar(); });
+  campo.addEventListener('keyup', function(e){
+    if(e.key==='Enter' || e.keyCode===13){ e.preventDefault(); tentar(); }
+    else if(erro.textContent){ erro.textContent=''; }
+  });
 })();
 </script><script>
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
