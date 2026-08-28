@@ -1,5 +1,5 @@
 /* Receituário de Bolso: offline. Trocar VERSAO a cada atualização do index.html. */
-var VERSAO = 'receituario-20260827-2110';
+var VERSAO = 'receituario-20260828-1021';
 var NUCLEO = ['./', './index.html', './manifest.webmanifest',
               './icon-192.png', './icon-512.png', './icon-180.png'];
 
