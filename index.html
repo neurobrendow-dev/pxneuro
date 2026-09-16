@@ -219,13 +219,30 @@ tbody tr:nth-child(even) td{background:var(--surface-2)}
 .trava .ativar{display:flex; align-items:center; gap:8px; justify-content:center;
   margin-top:14px; font-size:12.5px; color:var(--muted); cursor:pointer}
 .trava .ativar[hidden]{display:none}
+.trava .ativar input{width:auto; flex:none; margin:0; padding:0; font-size:inherit; letter-spacing:normal;
+  accent-color:var(--accent)}
 .trava .pe{margin-top:18px; font-size:11.5px; color:var(--muted); line-height:1.5}
 body.travado{overflow:hidden}
 body.travado .wrap, body.travado .toast{display:none}
+
+/* ---------- botão de travar a tela ---------- */
+.travar{position:fixed; z-index:150;
+  left:calc(16px + env(safe-area-inset-left)); bottom:calc(16px + env(safe-area-inset-bottom));
+  display:inline-flex; align-items:center; gap:7px; padding:9px 14px 9px 11px;
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:500; color:var(--ink-2); background:var(--surface); border:1px solid var(--line);
+  border-radius:999px; box-shadow:var(--shadow); cursor:pointer}
+.travar svg{width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8;
+  stroke-linecap:round; stroke-linejoin:round}
+.travar:hover{border-color:var(--accent); color:var(--accent-ink)}
+.travar:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+body.travado .travar{display:none}
+/* o rodapé do menu lateral não pode ficar embaixo do botão */
+@media (min-width:901px){ .rail{padding-bottom:78px} }
 </style></head><body><div class="trava" id="trava" hidden>
  <form class="cartao" id="formSenha" action="#" novalidate>
   <div class="marca">Receituário de bolso</div>
-  <h1>Digite a senha</h1>
+  <h1 id="travaTitulo">Digite a senha</h1>
   <button id="digital" type="button" hidden>
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a9 9 0 0 0-9 9v3"/><path d="M21 14v-3a9 9 0 0 0-4.5-7.8"/><path d="M7 12a5 5 0 0 1 10 0v2a12 12 0 0 1-.8 4.3"/><path d="M12 12v3a16 16 0 0 1-1 5.6"/><path d="M5.5 19.5A14 14 0 0 0 7 14"/></svg>
     <span id="digitalTexto">Entrar com a digital</span>
@@ -238,13 +255,13 @@ body.travado .wrap, body.travado .toast{display:none}
   <label class="ativar" id="ativarDigital" hidden>
     <input type="checkbox" id="chkDigital"> Ativar a digital deste aparelho na próxima entrada
   </label>
-  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.<br><span style="opacity:.6">versão 28/08 21:02</span></div>
+  <div class="pe"><span id="travaPe">O acesso fica salvo neste aparelho por 21 dias.</span><br><span style="opacity:.6">versão 16/09 08:48</span></div>
  </form>
 </div><div class="wrap">
 <nav class="rail">
  <div class="brand"><span>Referência de posologia</span>Receituário de bolso</div>
  <div class="railnav"><a href="#s1"><b>01</b><span>Crise de enxaqueca</span></a><a href="#s2"><b>02</b><span>Profilaxia da enxaqueca</span></a><a href="#s3"><b>03</b><span>Situações especiais da enxaqueca</span></a><a href="#s4"><b>04</b><span>Outras cefaleias e dores craniofaciais</span></a><a href="#s5"><b>05</b><span>Epilepsia e crises epilépticas</span></a><a href="#s6"><b>06</b><span>Dor neuropática e neuropatias</span></a><a href="#s7"><b>07</b><span>Parkinson e transtornos do movimento</span></a><a href="#s8"><b>08</b><span>Demência e cognição</span></a><a href="#s9"><b>09</b><span>Tontura e vertigem</span></a><a href="#s10"><b>10</b><span>Sono</span></a><a href="#s11"><b>11</b><span>AVC e prevenção vascular</span></a><a href="#s12"><b>12</b><span>Outras condições neurológicas</span></a><a href="#s13"><b>13</b><span>Antidepressivos</span></a><a href="#s14"><b>14</b><span>Antipsicóticos</span></a><a href="#s15"><b>15</b><span>Ansiolíticos e estabilizadores de humor</span></a><a href="#s16"><b>16</b><span>TDAH e autismo</span></a><a href="#s17"><b>17</b><span>Dependência de álcool, tabaco e outras substâncias</span></a><a href="#s18"><b>18</b><span>Dor crônica, opioides e adjuvantes</span></a><a href="#s19"><b>19</b><span>Vitaminas, reposições e classes de apoio</span></a><a href="#s20"><b>20</b><span>Tabelas de consulta rápida</span></a><a href="#s21"><b>21</b><span>Planos prontos por cenário</span></a></div>
- <div class="railfoot">Apoio à decisão, de uso pessoal do prescritor. Doses usuais em adulto; conferir bula, contraindicações, interações e ajuste renal ou hepático em cada caso.<br><br>Atualizado em 28/08/2026.</div>
+ <div class="railfoot">Apoio à decisão, de uso pessoal do prescritor. Doses usuais em adulto; conferir bula, contraindicações, interações e ajuste renal ou hepático em cada caso.<br><br>Atualizado em 16/09/2026.</div>
 </nav>
 <main>
  <div class="top">
@@ -263,7 +280,7 @@ body.travado .wrap, body.travado .toast{display:none}
  <div class="empty hide" id="empty"><b>Nenhum verbete encontrado</b>Tente outro termo, ou parte da palavra.</div>
 </main>
 </div>
-<div class="toast" id="toast"></div><script>
+<div class="toast" id="toast"></div><button class="travar" id="travar" type="button" aria-label="Travar a tela" title="Travar a tela"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>travar</button><script>
 (function(){
   var q=document.getElementById('q'), items=[].slice.call(document.querySelectorAll('.item')),
       groups=[].slice.call(document.querySelectorAll('.grp')),
@@ -401,6 +418,8 @@ body.travado .wrap, body.travado .toast{display:none}
 </script><script>
 (function(){
   var CHAVE='receituario.acesso', DIAS=21, ALVO=5883537;   // hash da senha, para não ficar em texto puro na página
+  // travado pelo botão: continua travado ao recarregar ou reabrir, mesmo com o acesso de 21 dias em dia
+  var TRAVADO='receituario.travado';
   function hash(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return h%9999991;}
   function guardar(){
     try{ localStorage.setItem(CHAVE, String(Date.now()+DIAS*864e5)); }catch(e){}
@@ -408,28 +427,18 @@ body.travado .wrap, body.travado .toast{display:none}
   function valido(){
     try{ var t=localStorage.getItem(CHAVE); return !!t && Date.now() < Number(t); }catch(e){ return false; }
   }
+  function travadoPeloBotao(){ try{ return localStorage.getItem(TRAVADO)==='1'; }catch(e){ return false; } }
+  function marcarTravado(sim){
+    try{ if(sim){ localStorage.setItem(TRAVADO,'1'); } else { localStorage.removeItem(TRAVADO); } }catch(e){}
+  }
+
   var trava=document.getElementById('trava'), campo=document.getElementById('senha'),
-      erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha');
-  function abrir(){
-    document.body.classList.remove('travado');
-    trava.hidden=true;
-    trava.style.display='none';        // cinto e suspensório: não depende do [hidden]
-    if(trava.parentNode) trava.parentNode.removeChild(trava);
-  }
-  function tentar(){
-    if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); return true; }
-    erro.textContent='Senha incorreta.'; campo.value=''; campo.focus();
-    return false;
-  }
-  if(valido()){ abrir(); return; }
-  document.body.classList.add('travado');
-  trava.hidden=false;
-  try{ campo.focus(); }catch(e){}
-  // submit cobre de uma vez: clique no botão, Enter no teclado e a tecla Ir do celular
-  form.addEventListener('submit', function(e){ e.preventDefault(); tentar(); });
+      erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha'),
+      titulo=document.getElementById('travaTitulo'), pe=document.getElementById('travaPe'),
+      botaoTravar=document.getElementById('travar'), rolagem=null;
 
   /* ---------- digital: Touch ID no Mac, Windows Hello no Windows ---------- */
-  var CRED='receituario.credencial';
+  var CRED='receituario.credencial', temLeitor=false;
   var btnDigital=document.getElementById('digital'),
       txtDigital=document.getElementById('digitalTexto'),
       ouSenha=document.getElementById('ouSenha'),
@@ -473,36 +482,86 @@ body.travado .wrap, body.travado .toast{display:none}
     }}).then(function(){ guardar(); abrir(); return true; });
   }
 
-  suportaDigital().then(function(tem){
-    if(!tem) return;                       // aparelho sem leitor: fica só a senha
-    if(credGuardada()){
-      btnDigital.hidden=false; ouSenha.hidden=false;
-      btnDigital.addEventListener('click', function(){
-        txtDigital.textContent='Aguardando a digital...';
-        entrarComDigital().catch(function(){
-          txtDigital.textContent='Entrar com a digital';
-          erro.textContent='Não deu para ler a digital. Use a senha.';
-        });
-      });
-      entrarComDigital().catch(function(){});   // tenta assim que abre
-    } else {
-      ativar.hidden=false;                 // oferece ativar depois da senha
+  // a digital pode ter sido ativada depois que a página abriu: reavaliar a cada vez que trava
+  function atualizarDigital(){
+    var cred = !!credGuardada();
+    btnDigital.hidden = !(temLeitor && cred);
+    ouSenha.hidden = btnDigital.hidden;
+    ativar.hidden = !(temLeitor && !cred);
+    txtDigital.textContent = 'Entrar com a digital';
+  }
+
+  /* ---------- travar e destravar ---------- */
+  function mostrar(peloBotao){
+    titulo.textContent = peloBotao ? 'Tela travada' : 'Digite a senha';
+    erro.textContent = ''; campo.value = '';
+    atualizarDigital();
+    pe.textContent = !peloBotao ? 'O acesso fica salvo neste aparelho por 21 dias.'
+                   : (btnDigital.hidden ? 'Para voltar, digite a senha.' : 'Para voltar, use a digital ou a senha.');
+    document.body.classList.add('travado');
+    trava.hidden = false; trava.style.display = '';
+    // no celular o foco abriria o teclado no instante em que trava; lá a pessoa toca no campo ao voltar
+    if(!peloBotao || (window.matchMedia && matchMedia('(pointer:fine)').matches)){
+      try{ campo.focus({preventScroll:true}); }catch(e){}
     }
-  });
+  }
+  function abrir(){
+    marcarTravado(false);
+    document.body.classList.remove('travado');
+    trava.hidden = true;
+    trava.style.display = 'none';      // cinto e suspensório: não depende do [hidden]
+    campo.value = '';
+    if(rolagem !== null){ window.scrollTo(0, rolagem); rolagem = null; }   // volta ao verbete onde estava
+  }
+  function travar(){
+    rolagem = window.pageYOffset || document.documentElement.scrollTop || 0;
+    marcarTravado(true);
+    try{ window.getSelection().removeAllRanges(); }catch(e){}
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    mostrar(true);
+  }
+  function tentar(){
+    if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); return true; }
+    erro.textContent='Senha incorreta.'; campo.value=''; campo.focus();
+    return false;
+  }
 
   var abrirOriginal = abrir;
   abrir = function(){
     if(chk && chk.checked && !credGuardada()){
-      registrarDigital().catch(function(){}).then(function(){ abrirOriginal(); });
+      registrarDigital().catch(function(){}).then(function(){ chk.checked=false; abrirOriginal(); });
       return;
     }
     abrirOriginal();
   };
+
+  // submit cobre de uma vez: clique no botão, Enter no teclado e a tecla Ir do celular
+  form.addEventListener('submit', function(e){ e.preventDefault(); tentar(); });
   // redundância para navegador que não dispare submit por algum motivo
   document.getElementById('entrar').addEventListener('click', function(e){ e.preventDefault(); tentar(); });
   campo.addEventListener('keyup', function(e){
     if(e.key==='Enter' || e.keyCode===13){ e.preventDefault(); tentar(); }
     else if(erro.textContent){ erro.textContent=''; }
+  });
+  btnDigital.addEventListener('click', function(){
+    txtDigital.textContent='Aguardando a digital...';
+    entrarComDigital().catch(function(){
+      txtDigital.textContent='Entrar com a digital';
+      erro.textContent='Não deu para ler a digital. Use a senha.';
+    });
+  });
+  if(botaoTravar) botaoTravar.addEventListener('click', travar);
+
+  /* ---------- ao abrir a página ---------- */
+  var comecaTravado = travadoPeloBotao() || !valido();
+  if(comecaTravado){ mostrar(travadoPeloBotao()); } else { abrir(); }
+
+  suportaDigital().then(function(tem){
+    temLeitor = tem;
+    atualizarDigital();
+    if(travadoPeloBotao() && !btnDigital.hidden){ pe.textContent = 'Para voltar, use a digital ou a senha.'; }
+    // abrir o app já travado oferece a digital de cara; travar pelo botão, não
+    if(tem && comecaTravado && credGuardada() && !trava.hidden){ entrarComDigital().catch(function(){}); }
   });
 })();
 </script><script>
