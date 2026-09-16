@@ -225,24 +225,43 @@ tbody tr:nth-child(even) td{background:var(--surface-2)}
 body.travado{overflow:hidden}
 body.travado .wrap, body.travado .toast{display:none}
 
-/* ---------- botão de travar a tela ---------- */
-.travar{position:fixed; z-index:150;
+/* ---------- botão ocultar ---------- */
+.ocultar{position:fixed; z-index:150;
   left:calc(16px + env(safe-area-inset-left)); bottom:calc(16px + env(safe-area-inset-bottom));
   display:inline-flex; align-items:center; gap:7px; padding:9px 14px 9px 11px;
   font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
   font-weight:500; color:var(--ink-2); background:var(--surface); border:1px solid var(--line);
   border-radius:999px; box-shadow:var(--shadow); cursor:pointer}
-.travar svg{width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8;
+.ocultar svg{width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8;
   stroke-linecap:round; stroke-linejoin:round}
-.travar:hover{border-color:var(--accent); color:var(--accent-ink)}
-.travar:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-body.travado .travar{display:none}
+.ocultar:hover{border-color:var(--accent); color:var(--accent-ink)}
+.ocultar:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 /* o rodapé do menu lateral não pode ficar embaixo do botão */
 @media (min-width:901px){ .rail{padding-bottom:78px} }
+
+/* ---------- proteção de tela: preta, com relógio, como aparelho em repouso ---------- */
+/* sempre escura, nos dois temas: clara pareceria a tela do app vazia, e não um aparelho parado */
+.protecao{position:fixed; inset:0; z-index:300; background:#000;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  cursor:default; -webkit-user-select:none; user-select:none;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent}
+.protecao[hidden]{display:none !important}
+.protecao .hora{font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif; font-weight:400;
+  font-size:clamp(72px,17vw,176px); line-height:1; letter-spacing:-.03em; color:#8d969e;
+  font-variant-numeric:tabular-nums}
+.protecao .data{font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:clamp(15px,2.2vw,21px); color:#5c656d}
+.protecao .dica{position:absolute; left:16px; right:16px; bottom:calc(30px + env(safe-area-inset-bottom));
+  text-align:center; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; color:#4d555c; transition:opacity .9s}
+.protecao .dica.some{opacity:0}
+@media (prefers-reduced-motion:reduce){ .protecao .dica{transition:none} }
+body.protegido{overflow:hidden}
+body.protegido .wrap, body.protegido .toast, body.protegido .ocultar{display:none}
 </style></head><body><div class="trava" id="trava" hidden>
  <form class="cartao" id="formSenha" action="#" novalidate>
   <div class="marca">Receituário de bolso</div>
-  <h1 id="travaTitulo">Digite a senha</h1>
+  <h1>Digite a senha</h1>
   <button id="digital" type="button" hidden>
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a9 9 0 0 0-9 9v3"/><path d="M21 14v-3a9 9 0 0 0-4.5-7.8"/><path d="M7 12a5 5 0 0 1 10 0v2a12 12 0 0 1-.8 4.3"/><path d="M12 12v3a16 16 0 0 1-1 5.6"/><path d="M5.5 19.5A14 14 0 0 0 7 14"/></svg>
     <span id="digitalTexto">Entrar com a digital</span>
@@ -255,7 +274,7 @@ body.travado .travar{display:none}
   <label class="ativar" id="ativarDigital" hidden>
     <input type="checkbox" id="chkDigital"> Ativar a digital deste aparelho na próxima entrada
   </label>
-  <div class="pe"><span id="travaPe">O acesso fica salvo neste aparelho por 21 dias.</span><br><span style="opacity:.6">versão 16/09 08:48</span></div>
+  <div class="pe">O acesso fica salvo neste aparelho por 21 dias.<br><span style="opacity:.6">versão 16/09 09:47</span></div>
  </form>
 </div><div class="wrap">
 <nav class="rail">
@@ -280,7 +299,7 @@ body.travado .travar{display:none}
  <div class="empty hide" id="empty"><b>Nenhum verbete encontrado</b>Tente outro termo, ou parte da palavra.</div>
 </main>
 </div>
-<div class="toast" id="toast"></div><button class="travar" id="travar" type="button" aria-label="Travar a tela" title="Travar a tela"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>travar</button><script>
+<div class="toast" id="toast"></div><button class="ocultar" id="ocultar" type="button" aria-label="Ocultar a tela (dois cliques na tela para voltar)" title="Ocultar a tela. Para voltar, dois cliques na tela."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>ocultar</button><div class="protecao" id="protecao" hidden aria-hidden="true"><div class="hora" id="protecaoHora"></div><div class="data" id="protecaoData"></div><div class="dica" id="protecaoDica"></div></div><script>
 (function(){
   var q=document.getElementById('q'), items=[].slice.call(document.querySelectorAll('.item')),
       groups=[].slice.call(document.querySelectorAll('.grp')),
@@ -418,8 +437,6 @@ body.travado .travar{display:none}
 </script><script>
 (function(){
   var CHAVE='receituario.acesso', DIAS=21, ALVO=5883537;   // hash da senha, para não ficar em texto puro na página
-  // travado pelo botão: continua travado ao recarregar ou reabrir, mesmo com o acesso de 21 dias em dia
-  var TRAVADO='receituario.travado';
   function hash(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return h%9999991;}
   function guardar(){
     try{ localStorage.setItem(CHAVE, String(Date.now()+DIAS*864e5)); }catch(e){}
@@ -427,15 +444,11 @@ body.travado .travar{display:none}
   function valido(){
     try{ var t=localStorage.getItem(CHAVE); return !!t && Date.now() < Number(t); }catch(e){ return false; }
   }
-  function travadoPeloBotao(){ try{ return localStorage.getItem(TRAVADO)==='1'; }catch(e){ return false; } }
-  function marcarTravado(sim){
-    try{ if(sim){ localStorage.setItem(TRAVADO,'1'); } else { localStorage.removeItem(TRAVADO); } }catch(e){}
-  }
+  // a versão de 16/09 travava com senha e gravava isto; sem apagar, não atrapalha, mas fica lixo no aparelho
+  try{ localStorage.removeItem('receituario.travado'); }catch(e){}
 
   var trava=document.getElementById('trava'), campo=document.getElementById('senha'),
-      erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha'),
-      titulo=document.getElementById('travaTitulo'), pe=document.getElementById('travaPe'),
-      botaoTravar=document.getElementById('travar'), rolagem=null;
+      erro=document.getElementById('erroSenha'), form=document.getElementById('formSenha');
 
   /* ---------- digital: Touch ID no Mac, Windows Hello no Windows ---------- */
   var CRED='receituario.credencial', temLeitor=false;
@@ -482,7 +495,6 @@ body.travado .travar{display:none}
     }}).then(function(){ guardar(); abrir(); return true; });
   }
 
-  // a digital pode ter sido ativada depois que a página abriu: reavaliar a cada vez que trava
   function atualizarDigital(){
     var cred = !!credGuardada();
     btnDigital.hidden = !(temLeitor && cred);
@@ -491,34 +503,18 @@ body.travado .travar{display:none}
     txtDigital.textContent = 'Entrar com a digital';
   }
 
-  /* ---------- travar e destravar ---------- */
-  function mostrar(peloBotao){
-    titulo.textContent = peloBotao ? 'Tela travada' : 'Digite a senha';
+  function mostrar(){
     erro.textContent = ''; campo.value = '';
     atualizarDigital();
-    pe.textContent = !peloBotao ? 'O acesso fica salvo neste aparelho por 21 dias.'
-                   : (btnDigital.hidden ? 'Para voltar, digite a senha.' : 'Para voltar, use a digital ou a senha.');
     document.body.classList.add('travado');
     trava.hidden = false; trava.style.display = '';
-    // no celular o foco abriria o teclado no instante em que trava; lá a pessoa toca no campo ao voltar
-    if(!peloBotao || (window.matchMedia && matchMedia('(pointer:fine)').matches)){
-      try{ campo.focus({preventScroll:true}); }catch(e){}
-    }
+    try{ campo.focus({preventScroll:true}); }catch(e){}
   }
   function abrir(){
-    marcarTravado(false);
     document.body.classList.remove('travado');
     trava.hidden = true;
     trava.style.display = 'none';      // cinto e suspensório: não depende do [hidden]
     campo.value = '';
-    if(rolagem !== null){ window.scrollTo(0, rolagem); rolagem = null; }   // volta ao verbete onde estava
-  }
-  function travar(){
-    rolagem = window.pageYOffset || document.documentElement.scrollTop || 0;
-    marcarTravado(true);
-    try{ window.getSelection().removeAllRanges(); }catch(e){}
-    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    mostrar(true);
   }
   function tentar(){
     if(hash(campo.value.trim())===ALVO){ guardar(); abrir(); return true; }
@@ -550,19 +546,79 @@ body.travado .travar{display:none}
       erro.textContent='Não deu para ler a digital. Use a senha.';
     });
   });
-  if(botaoTravar) botaoTravar.addEventListener('click', travar);
 
-  /* ---------- ao abrir a página ---------- */
-  var comecaTravado = travadoPeloBotao() || !valido();
-  if(comecaTravado){ mostrar(travadoPeloBotao()); } else { abrir(); }
+  var comecaTravado = !valido();
+  if(comecaTravado){ mostrar(); } else { abrir(); }
 
   suportaDigital().then(function(tem){
     temLeitor = tem;
     atualizarDigital();
-    if(travadoPeloBotao() && !btnDigital.hidden){ pe.textContent = 'Para voltar, use a digital ou a senha.'; }
-    // abrir o app já travado oferece a digital de cara; travar pelo botão, não
     if(tem && comecaTravado && credGuardada() && !trava.hidden){ entrarComDigital().catch(function(){}); }
   });
+})();
+</script><script>
+(function(){
+  // sessionStorage e não localStorage: sobrevive ao recarregar (a atualização automática do app recarrega
+  // a página e não pode revelar o conteúdo), mas o app aberto de novo começa normal
+  var CHAVE='receituario.protecao';
+  var tela=document.getElementById('protecao'), hora=document.getElementById('protecaoHora'),
+      data=document.getElementById('protecaoData'), dica=document.getElementById('protecaoDica'),
+      botao=document.getElementById('ocultar'),
+      cores=[].slice.call(document.querySelectorAll('meta[name="theme-color"]')),
+      rolagem=null, relogio=null, apaga=null, ultimo=0, ux=0, uy=0;
+
+  function marcar(sim){
+    try{ if(sim){ sessionStorage.setItem(CHAVE,'1'); } else { sessionStorage.removeItem(CHAVE); } }catch(e){}
+  }
+  function marcado(){ try{ return sessionStorage.getItem(CHAVE)==='1'; }catch(e){ return false; } }
+  function doisDigitos(n){ return (n<10?'0':'')+n; }
+  function atualizar(){
+    var d=new Date();
+    hora.textContent = doisDigitos(d.getHours())+':'+doisDigitos(d.getMinutes());
+    try{ data.textContent = d.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'}); }
+    catch(e){ data.textContent=''; }
+  }
+  // barra de status do celular também fica preta, senão denuncia o app por cima do relógio
+  function corDaBarra(preta){
+    cores.forEach(function(m){
+      if(preta){ if(!m.dataset.original) m.dataset.original=m.content; m.content='#000000'; }
+      else if(m.dataset.original){ m.content=m.dataset.original; }
+    });
+  }
+
+  function proteger(){
+    rolagem = window.pageYOffset || document.documentElement.scrollTop || 0;
+    marcar(true);
+    try{ window.getSelection().removeAllRanges(); }catch(e){}
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    atualizar(); clearInterval(relogio); relogio=setInterval(atualizar, 10000);
+    dica.textContent = (window.matchMedia && matchMedia('(pointer:fine)').matches)
+      ? 'clique duas vezes para voltar' : 'toque duas vezes para voltar';
+    dica.classList.remove('some'); clearTimeout(apaga);
+    apaga = setTimeout(function(){ dica.classList.add('some'); }, 2500);   // depois fica só o relógio
+    document.body.classList.add('protegido');
+    tela.hidden = false;
+    corDaBarra(true);
+  }
+  function voltar(){
+    marcar(false);
+    clearInterval(relogio); clearTimeout(apaga);
+    tela.hidden = true;
+    document.body.classList.remove('protegido');
+    corDaBarra(false);
+    if(rolagem!==null){ window.scrollTo(0, rolagem); rolagem=null; }   // volta ao verbete onde estava
+  }
+
+  // dois cliques ou dois toques no mesmo lugar. Usa o click, que é o último evento do toque:
+  // assim nenhum clique fantasma atravessa para o botão de copiar que estava embaixo
+  tela.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    var agora = Date.now(), perto = Math.abs(e.clientX-ux) < 60 && Math.abs(e.clientY-uy) < 60;
+    if(agora-ultimo < 450 && perto){ ultimo=0; voltar(); return; }
+    ultimo = agora; ux = e.clientX; uy = e.clientY;
+  });
+  if(botao) botao.addEventListener('click', proteger);
+  if(marcado()) proteger();
 })();
 </script><script>
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
